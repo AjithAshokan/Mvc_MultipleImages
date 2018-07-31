@@ -1,0 +1,29 @@
+USE [NuNetworkDb]
+GO
+/****** Object:  StoredProcedure [dbo].[USPExceptionInsertion]    Script Date: 7/31/2018 9:55:20 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Meenu Mathew>
+-- Create date: <27/11/2017>
+-- Description:	<ExceptionInsert>
+-- =============================================
+ALTER PROCEDURE [dbo].[USPExceptionInsertion]
+	@Error_No int,
+	@Error_Pro varchar(150),
+	@Error_Line int,
+	@Error_Message varchar(150),
+	@Error_State int,
+	@OperationId int
+AS	
+BEGIN
+	
+	BEGIN TRANSACTION
+	SET NOCOUNT ON;
+	insert into tblException values(@Error_No,@Error_Pro,@Error_Line,@Error_Message,@Error_State,@OperationId)
+	COMMIT TRANSACTION
+	
+	
+END
