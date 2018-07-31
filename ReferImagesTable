@@ -1,0 +1,56 @@
+USE [NuNetworkDb]
+GO
+
+/****** Object:  Table [dbo].[tblPostImage]    Script Date: 7/31/2018 9:56:42 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[tblPostImage](
+	[PostImageId] [int] IDENTITY(1,1) NOT NULL,
+	[PostUrl] [varchar](max) NOT NULL,
+	[FK_PostId] [int] NOT NULL,
+	[FK_CompanyId] [int] NULL,
+	[FK_UserId] [int] NOT NULL,
+	[FK_PostTypeId] [int] NOT NULL,
+	[IsDeleted] [int] NOT NULL,
+	[CreatedBy] [int] NOT NULL,
+	[UpdatedBy] [int] NOT NULL,
+ CONSTRAINT [PK_tblPostImage] PRIMARY KEY CLUSTERED 
+(
+	[PostImageId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[tblPostImage]  WITH CHECK ADD  CONSTRAINT [FK_tblPostImage_tblCompanyRegistration] FOREIGN KEY([FK_CompanyId])
+REFERENCES [dbo].[tblCompanyRegistration] ([CompanyId])
+GO
+
+ALTER TABLE [dbo].[tblPostImage] CHECK CONSTRAINT [FK_tblPostImage_tblCompanyRegistration]
+GO
+
+ALTER TABLE [dbo].[tblPostImage]  WITH CHECK ADD  CONSTRAINT [FK_tblPostImage_tblPost] FOREIGN KEY([FK_PostId])
+REFERENCES [dbo].[tblPost] ([PostId])
+GO
+
+ALTER TABLE [dbo].[tblPostImage] CHECK CONSTRAINT [FK_tblPostImage_tblPost]
+GO
+
+ALTER TABLE [dbo].[tblPostImage]  WITH CHECK ADD  CONSTRAINT [FK_tblPostImage_tblPostType] FOREIGN KEY([FK_PostTypeId])
+REFERENCES [dbo].[tblPostType] ([PostTypeId])
+GO
+
+ALTER TABLE [dbo].[tblPostImage] CHECK CONSTRAINT [FK_tblPostImage_tblPostType]
+GO
+
+ALTER TABLE [dbo].[tblPostImage]  WITH CHECK ADD  CONSTRAINT [FK_tblPostImage_tblUserRegistration] FOREIGN KEY([FK_UserId])
+REFERENCES [dbo].[tblUserRegistration] ([UserId])
+GO
+
+ALTER TABLE [dbo].[tblPostImage] CHECK CONSTRAINT [FK_tblPostImage_tblUserRegistration]
+GO
+
+
