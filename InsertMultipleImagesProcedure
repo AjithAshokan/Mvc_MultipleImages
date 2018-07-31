@@ -1,0 +1,77 @@
+USE [NuNetworkDb]
+GO
+/****** Object:  StoredProcedure [dbo].[USPInsertPost]    Script Date: 7/31/2018 9:53:46 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Meenu Mathew
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+ALTER PROCEDURE [dbo].[USPInsertPost]
+	
+	
+
+	@PostMessage varchar(MAX),
+	@FK_UserId int,
+	@FK_PostTypeId int,
+	@CompanyId int,
+	@PostUrl varchar(MAX) = null
+
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+
+	BEGIN TRY
+	BEGIN TRANSACTION
+	SET NOCOUNT ON;
+	Declare @Date datetime=getdate();
+	Declare @PostId int;
+	declare @flag int;
+	declare @NotificationTo int;
+	declare @CharIndex int;
+	declare @TempString varchar(max);
+		-- Insert statements for procedure here
+	INSERT INTO tblPost 
+	VALUES(@PostMessage,@FK_UserId,@FK_PostTypeId,GETDATE(),GETDATE(),@FK_UserId,@FK_UserId,GETDATE(),1,1,1)
+	set @PostId=SCOPE_IDENTITY();
+		EXEC USPLog 'tblPost',1,@Date,@CompanyId,1
+
+	set @TempString=@PostUrl;
+
+	set @CharIndex = charindex(',', @TempString);
+
+
+	if @PostUrl is not null
+		begin
+		while @CharIndex != 0 
+		begin 
+			insert into tblPostImage  values
+			(substring(@TempString, 0, @CharIndex),@PostId,@CompanyId,@FK_UserId,@FK_PostTypeId,1,@FK_UserId,@FK_UserId);       
+			set @TempString = substring(@TempString, @CharIndex + 1, len(@TempString) - @CharIndex);     
+			set @CharIndex = charindex(',',@TempString);
+			
+		end
+	end
+	
+		
+
+	
+	COMMIT TRANSACTION
+	END TRY
+	BEGIN CATCH
+	ROLLBACK TRANSACTION
+
+		Declare @Error_No int=ERROR_NUMBER(),
+		@Error_Pro varchar(150)=ERROR_PROCEDURE(),
+		@Error_Line int=ERROR_LINE(),
+		@Error_Message varchar(150)=ERROR_MESSAGE(),
+		@Error_State int =ERROR_STATE()
+		EXEC USPExceptionInsertion @Error_No,@Error_Pro,@Error_Line,@Error_Message,@Error_State,1
+
+	END CATCH
+END
+
